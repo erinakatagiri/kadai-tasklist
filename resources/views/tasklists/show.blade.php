@@ -5,7 +5,8 @@
 <!-- Write content for each page here -->
 <h1>id = {{ $tasklist->id }} のタスクの詳細ページ</h1>
 
-    <p>{{ $tasklist->content }}</p>
+     <p>ステータス: {{ $tasklist->stauts }}</p>
+    <p>タスク{{ $tasklist->content }}</p>
     
      {!! link_to_route('tasklists.edit', 'このタスクを編集', ['id' => $tasklist->id]) !!}
      
