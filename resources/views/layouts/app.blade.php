@@ -21,6 +21,9 @@
         <div class="container-fluid">
         @include('commons.error_tasklists')
         @yield('content')
+            </div>
+            </div>
         </div>
+        
     </body>
 </html>
