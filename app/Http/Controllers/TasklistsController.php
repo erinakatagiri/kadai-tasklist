@@ -17,11 +17,22 @@ class TasklistsController extends Controller
      */
     public function index()
     {
-        $tasklists = Tasklist::all();
-
-        return view('tasklists.index', [
-            'tasklists' => $tasklists,
-        ]);
+     $data = [];
+        if (\Auth::check()) {
+            $user = \Auth::user();
+            $tasklists = $user->tasklists()->orderBy('created_at', 'desc')->paginate(10);
+            
+            //$tasks = Task::all();
+            $data = [
+                'user' => $user,
+                'tasklists' => $tasklists,
+            ];
+            
+            return view('tasklists.index', $data);
+        }else {
+            return view('welcome');
+    }
+    
     }
 
     /**
@@ -54,6 +65,7 @@ class TasklistsController extends Controller
         $tasklist = new Tasklist;
         $tasklist->status = $request->status; 
         $tasklist->content = $request->content;
+        $tasklist->user_id = \Auth::user()->id;
         $tasklist->save();
 
         return redirect('/');
@@ -67,12 +79,24 @@ class TasklistsController extends Controller
      */
     public function show($id)
     {
-        $tasklist = Tasklist::find($id);
-
-        return view('tasklists.show', [
+        if(\Auth::check())
+        {
+            $tasklist = Tasklist::find($id);
+            $user = \Auth::user();
+        
+        if ($user->id === $tasklist->user_id) {
+            return view('tasklists.show', [
             'tasklist' => $tasklist,
+            'user' => $user,
         ]);
-    }
+        }else{
+           return redirect('/');
+        }
+        }
+        else{
+        return view ('welcome');
+        }
+        }
 
     /**
      * Show the form for editing the specified resource.
@@ -82,11 +106,24 @@ class TasklistsController extends Controller
      */
     public function edit($id)
     {
+          if(\Auth::check())
+        {
         $tasklist = Tasklist::find($id);
-
+        $user = \Auth::user();
+        
+        if (\Auth::user()->id === $tasklist->user_id) {
         return view('tasklists.edit', [
             'tasklist' => $tasklist,
+            'user' => $user,
         ]);
+        }
+        else{
+           return redirect('/');
+            }
+        }
+    else{
+        return view ('welcome');
+    }
     }
 
     /**
